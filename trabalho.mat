@@ -1,0 +1,58 @@
+%====================================================
+% \ f i l e s o l u c a o . mat
+% \ t i t l e Trabalho de PDI − 2017/1
+% \ a u t h o r Fulano de Souza
+% \ d a t e 2017−07−12
+%
+% Este arquivo implenta a solucao do problema
+% proposto usando o algoritmo ABC. Para usar a
+% solucao desenvolvida , o programa deve ser executado
+% da seguinte forma:
+% <comando de compilacao >
+% <comando de execucao com lista de parametros>
+%====================================================
+
+
+%1. Ler a imagem de entrada.
+%2. Converter a imagem RGB para HSI.
+%3. Trocar apenas o valor da cor, no modelo HSI.
+%4. Finalmente, chama-se a função de conversão do HSI para RGB passando como parâmetro esta nova imagem HSI alterada.
+
+
+function hsi_image = rgb2hsi(rgbimage)
+
+pkg load image
+
+R = double( rgbimage( : , : , 1) ) / 255.0 ;
+G = double ( rgbimage( : , : , 2) ) / 255.0 ;
+B = double ( rgbimage( : , : , 3) ) / 255.0 ;
+I = (R + G + B) / 3 ;
+
+temp = (R − G).∗(R − G) + (R − B).∗(G − B) ;
+temp ( : , : ) = sqrt( double( temp ( : , : ) ) );
+[ L , C ] = size ( temp ) ;
+S = zeros ( [ L C ] ) ; 
+S = double(S);
+H = S;
+
+for i =1:L
+	for j = 1 :C
+		if (R( i , j ) + G( i , j ) + B( i , j ) ) = 0
+			S( i , j )=1−(3∗min ( min (R( i , j ) ,G( i , j ) ) ,B( i , j ) ) ) / (R( i , j )+G( i , j )+B( i , j ) ) ;
+			end ;
+			if ( temp ( i , j ) > 0 )
+				H( i , j ) = acos( 0 . 5 ∗ ( 2 ∗R( i , j ) − G( i , j ) − B( i , j ) ) / temp ( i , j ) ) ;
+				if (B( i , j ) > G( i , j ) )
+					H( i , j ) = 2∗ pi − H( i , j ) ;
+			end;
+		end;
+	end;
+end;
+
+H = H / ( 2 ∗ pi ) ;
+figure , imshow ( uint8 ( H ∗ 255 ) )
+figure , imshow ( uint8 ( S ∗ 255 ) )
+figure , imshow ( uint8 ( I ∗ 255 ) )
+hsi_image = zeros ( size ( rgb_image ) ) ;
+hsi_image ( : , : , 1 ) = H;
+hsi_image ( : , : , 2) = S ;
